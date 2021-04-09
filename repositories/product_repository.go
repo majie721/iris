@@ -62,7 +62,7 @@ func (p ProductManager) Update(product *datamodels.Product) (err error) {
 		return err
 	}
 
-	sql := "update product set name=?,num=?,product_image=?,product_url=? where id="+strconv.FormatInt(product.ID,10)
+	sql := "update iris_product set name=?,num=?,product_image=?,product_url=? where id="+strconv.FormatInt(product.ID,10)
 	stmt,err :=p.mysqlConn.Prepare(sql)
 	if err!=nil{
 		return err
@@ -78,7 +78,7 @@ func (p *ProductManager) Delete(id int64 ) bool {
 		return false
 	}
 
-	sql := "delete from product where id=?"
+	sql := "delete from iris_product where id = ?"
 
 	stmt,err := p.mysqlConn.Prepare(sql)
 	if err !=nil{
@@ -93,12 +93,12 @@ func (p *ProductManager) Delete(id int64 ) bool {
 	return true
 }
 
-func (p ProductManager) SelectByKey(int64)(res *datamodels.Product,err error) {
+func (p *ProductManager) SelectByKey(id int64)(res *datamodels.Product,err error) {
 	if err := p.Conn();err !=nil{
 		return &datamodels.Product{},err
 	}
 
-	sql := "select * from product where id=?"
+	sql := "select * from iris_product where id = 1"
 
 	row,err := p.mysqlConn.Query(sql)
 	if err !=nil{
@@ -106,7 +106,8 @@ func (p ProductManager) SelectByKey(int64)(res *datamodels.Product,err error) {
 	}
 	defer row.Close()
 	result := common.GetResultRow(row)
-	if len(result) == 0{
+	// fmt.Printf("%+v",result)
+	if len(result) == 0 {
 		return &datamodels.Product{},nil
 	}
 
@@ -115,13 +116,13 @@ func (p ProductManager) SelectByKey(int64)(res *datamodels.Product,err error) {
 	return
 }
 
-func (p ProductManager) SelectAll()(productArr []*datamodels.Product,err error) {
+func (p *ProductManager) SelectAll()(productArr []*datamodels.Product,err error) {
 	if err := p.Conn();err !=nil{
 		return nil,err
 	}
 
 
-	sql := "select * from product "
+	sql := "select * from iris_product "
 
 	rows,err := p.mysqlConn.Query(sql)
 	defer rows.Close()

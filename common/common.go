@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"reflect"
 	"time"
 	"strconv"
@@ -10,6 +11,7 @@ import (
 //根据结构体中sql标签映射数据到结构体中并且转换类型
 func DataToStructByTagSql(data map[string]string, obj interface{}) {
 	objValue := reflect.ValueOf(obj).Elem()
+	fmt.Printf("AAAAAAA",objValue)
 	for i := 0; i < objValue.NumField(); i++ {
 		//获取sql对应的值
 		value := data[objValue.Type().Field(i).Tag.Get("sql")]
