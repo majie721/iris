@@ -2,6 +2,12 @@ package main
 
 import (
 	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/mvc"
+	"iris_stu/common"
+	"iris_stu/repositories"
+	"iris_stu/service"
+	"log"
+	"context"
 )
 
 func main()  {
@@ -27,7 +33,20 @@ func main()  {
 	})
 
 
+	db,err := common.NewMysqlConn()
+	if err !=nil{
+		log.Print("db connect error")
+	}
+	ctx,cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+
 	//注册控制器
+	productRepositories := repositories.NewProductManager("iris_product",db)
+	productService := service.NewProductService(productRepositories)
+	productParty := app.Party("/product")
+	product :=mvc.New(productParty)
+	product.Register(ctx,productService)
 
 	//启动服务
 	app.Run(
